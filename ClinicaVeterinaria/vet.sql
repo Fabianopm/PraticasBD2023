@@ -12,43 +12,78 @@
     o qual representa o agendamento da consulta.
 */
 
-CREATE TABLE Clinica (
-    id_clinica INT PRIMARY KEY,
+CREATE TABLE clinica (
+    id BIGINT PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     endereco VARCHAR(255) NOT NULL,
     telefone VARCHAR(20) NOT NULL
 );
 
-CREATE TABLE Veterinario (
-    id_veterinario INT PRIMARY KEY,
-    id_clinica INT,
+CREATE TABLE veterinario (
+    id BIGINT PRIMARY KEY,
+    id_clinica BIGINT,
     nome VARCHAR(255) NOT NULL,
-    especialidade VARCHAR(255) NOT NULL,
+    especialidade TEXT NOT NULL,
     licenca_num VARCHAR(20) NOT NULL,
-    FOREIGN KEY (id_clinica) REFERENCES Clinica(id_clinica)
+    FOREIGN KEY (id_clinica) REFERENCES clinica(id)
 );
 
-CREATE TABLE Paciente (
-    id_paciente INT PRIMARY KEY,
+CREATE TABLE paciente (
+    id BIGINT PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     especies VARCHAR(255) NOT NULL,
-    dob DATE NOT NULL
+    data_nascimento DATE NOT NULL,
+    id_proprietario BIGINT NOT NULL,
+    FOREIGN KEY (id_proprietario) REFERENCES proprietario(id)
 );
 
-CREATE TABLE Proprietario (
-    id_proprietario INT PRIMARY KEY,
+CREATE TABLE proprietario (
+    id BIGINT PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     telefone VARCHAR(20) NOT NULL,
     email VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE Encontro (
-    id_encontro INT PRIMARY KEY,
-    id_veterinario INT NOT NULL,
-    id_paciente INT NOT NULL,
-    id_proprietario INT NOT NULL,
-    date DATE NOT NULL,
-    FOREIGN KEY (id_veterinario) REFERENCES Veterinario(id_veterinario),
-    FOREIGN KEY (id_paciente) REFERENCES Paciente(id_paciente),
-    FOREIGN KEY (id_proprietario) REFERENCES Proprietario(id_proprietario)
+CREATE TABLE consulta (
+    id BIGINT NOT NULL,
+    id_veterinario BIGINT NOT NULL,
+    id_paciente BIGINT NOT NULL,
+    data_consulta DATE NOT NULL,
+    valor NUMERIC (10, 5) NOT NULL
 );
+
+ALTER TABLE consulta ADD PRIMARY KEY (id);
+ALTER TABLE consulta ADD FOREIGN KEY (id_veterinario) REFERENCES veterinario (id);
+ALTER TABLE consulta ADD FOREIGN KEY (id_paciente) REFERENCES paciente (id);
+
+
+CREATE SEQUENCE clinica_id_seq
+INCREMENT 1
+START 1
+CACHE 1;
+
+CREATE SEQUENCE veterinario_id_seq
+INCREMENT 1
+START 1
+CACHE 1;
+
+CREATE SEQUENCE paciente_id_seq
+INCREMENT 1
+START 1
+CACHE 1;
+
+CREATE SEQUENCE proprietario_id_seq
+INCREMENT 1
+START 1
+CACHE 1;
+
+CREATE SEQUENCE consulta_id_seq
+INCREMENT 1
+START 1
+CACHE 1;
+
+ALTER TABLE clinica ALTER COLUMN id SET DEFAULT NEXTVAL('clinica_id_seq');
+ALTER TABLE veterinario ALTER COLUMN id SET DEFAULT NEXTVAL('veterinario_id_seq');
+ALTER TABLE paciente ALTER COLUMN id SET DEFAULT NEXTVAL('paciente_id_seq');
+ALTER TABLE proprietario ALTER COLUMN id SET DEFAULT NEXTVAL('proprietario_id_seq');
+ALTER TABLE consulta ALTER COLUMN id SET DEFAULT NEXTVAL('consulta_id_seq');
